@@ -1,5 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #include <vector>
+//Add in the necessary imports for this lab.
+#include <iostream>
+#include <algorithm> //I might not use it I am just adding it in for the sake of it.
+#include <cmath>
+#include <random>
+
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
