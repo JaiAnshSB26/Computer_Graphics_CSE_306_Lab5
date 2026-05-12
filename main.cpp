@@ -66,6 +66,24 @@ int main() {
 
 	int nbiter = 100; // Initial number of iterations to work with as recommended.
 	std::cout << "[CHECK] Starting Sliced Optimal Transport for " << nbiter << " iterations..." << std::endl; //Intermediary Check print statement, so that I don't forget it later, I shall remove this later when everything works.
+	
+	//Main loop.
+	for (int iter = 0; iter < nbiter; ++iter) {
+		// Firstly, we generate the random direction on a spherre.
+		double r1 = dist(gen);
+		double r2 = dist(gen);
+
+		//I try to use the exact formula from the lecture notes but I don't know if it would generalise (it is given for compensating for narmalized spheres.)
+		double z = 1.0 - 2.0 * r2;
+		double radius_xy = std::sqrt(std::max(0.0, 1.0 - z * z));
+		Vec3 v = {
+			std::cos(2.0 * M_PI * r1) * radius_xy,
+			std::sin(2.0 * M_PI * r1) * radius_xy,
+			z
+		};
+
+
+	}
 
 	std::vector<unsigned char> image_result(W*H * 3, 0);
 	for (int i = 0; i < H; i++) {
