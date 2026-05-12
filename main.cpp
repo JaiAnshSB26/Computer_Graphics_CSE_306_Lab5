@@ -60,6 +60,13 @@ int main() {
         M[i] = image_target[i];
     }
 	
+	std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dist(0.0, 1.0); //Using the Real Uniform distribution from what I understood should be used...?
+
+	int nbiter = 100; // Initial number of iterations to work with as recommended.
+	std::cout << "[CHECK] Starting Sliced Optimal Transport for " << nbiter << " iterations..." << std::endl; //Intermediary Check print statement, so that I don't forget it later, I shall remove this later when everything works.
+
 	std::vector<unsigned char> image_result(W*H * 3, 0);
 	for (int i = 0; i < H; i++) {
 		for (int j = 0; j < W; j++) {
