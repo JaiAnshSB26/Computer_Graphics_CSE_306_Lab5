@@ -15,7 +15,7 @@
 #define M_PI           3.14159265358979323846
 #include <math.h> //I wanted the accurate value of the PI constant.
 
-//Firstly, I add in a structure for a 3D vector sicne the vector class might not be needed here, this shall suffice.
+//Firstly, I add in a structure I need later.
 struct Vec3 {
 	double x, y, z;
 };
