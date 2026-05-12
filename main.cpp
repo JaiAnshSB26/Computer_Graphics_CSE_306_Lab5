@@ -44,9 +44,21 @@ int main() {
         return -1;
     }
 
-	std::vector<double> image_double(W*H*3);
-	for (int i=0; i<W*H*3; i++)
-		image_double[i] = image[i];
+	int n_pixels_source = W * H;
+	int n_pixels_target = W2 * H2;
+	int n = std::min(n_pixels_source, n_pixels_target); //Even though there have been images provided of exactly equal size, I still try to use the minimum to be safe.
+
+	// std::vector<double> image_double(W*H*3);
+	// for (int i=0; i<W*H*3; i++)
+	// 	image_double[i] = image[i];
+
+	//Ofcourse convert to double for precise calculations, same thing just a bit easier for me to handle, I am doubling both.
+	std::vector<double> I(n * 3);
+    std::vector<double> M(n * 3);
+    for (int i = 0; i < n * 3; i++) {
+        I[i] = image_source[i];
+        M[i] = image_target[i];
+    }
 	
 	std::vector<unsigned char> image_result(W*H * 3, 0);
 	for (int i = 0; i < H; i++) {
