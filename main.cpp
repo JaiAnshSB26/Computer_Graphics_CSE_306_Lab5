@@ -20,13 +20,30 @@ struct Vec3 {
 int main() {
 
 	int W, H, C;
+	int W2, H2, C2;
 	
 	//stbi_set_flip_vertically_on_load(true);
-	unsigned char *image = stbi_load("8733654151_b9422bb2ec_k.jpg",
-                                 &W,
-                                 &H,
-                                 &C,
-                                 STBI_rgb);
+	// unsigned char *image = stbi_load("8733654151_b9422bb2ec_k.jpg",
+    //                              &W,
+    //                              &H,
+    //                              &C,
+    //                              STBI_rgb);
+	
+	// I just slightly tweaked the given method to keep the naming more easy for me to work with...
+    unsigned char *image_source = stbi_load("source.jpg", &W, &H, &C, STBI_rgb);
+    if (!image_source) {
+        std::cerr << "Failed to load source image! Exiting." << std::endl; //In case my image is named wrong.
+        return -1;
+    }
+
+	//Now about loading the target (model) image I write a similar method just for convenience.
+    unsigned char *image_target = stbi_load("target.jpg", &W2, &H2, &C2, STBI_rgb);
+    if (!image_target) {
+        std::cerr << "Failed to load target image! Exiting." << std::endl;
+        stbi_image_free(image_source);
+        return -1;
+    }
+
 	std::vector<double> image_double(W*H*3);
 	for (int i=0; i<W*H*3; i++)
 		image_double[i] = image[i];
