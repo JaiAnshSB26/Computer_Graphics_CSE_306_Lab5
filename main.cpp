@@ -6,14 +6,16 @@
 #include <cmath>
 #include <random>
 
-
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-
+//Firstly, I add in a structure for a 3D vector sicne the vector class might not be needed here, this shall suffice.
+struct Vec3 {
+	double x, y, z;
+};
 
 int main() {
 
