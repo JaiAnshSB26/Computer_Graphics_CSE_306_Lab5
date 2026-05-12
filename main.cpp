@@ -12,6 +12,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define M_PI           3.14159265358979323846
+#include <math.h> //I wanted the accurate value of the PI constant.
+
 //Firstly, I add in a structure for a 3D vector sicne the vector class might not be needed here, this shall suffice.
 struct Vec3 {
 	double x, y, z;
@@ -82,19 +85,66 @@ int main() {
 			z
 		};
 
-
-	}
-
-	std::vector<unsigned char> image_result(W*H * 3, 0);
-	for (int i = 0; i < H; i++) {
-		for (int j = 0; j < W; j++) {
-
-			image_result[(i*W + j) * 3 + 0] = image_double[(i*W+j)*3+0]*0.5;
-			image_result[(i*W + j) * 3 + 1] = image_double[(i*W+j)*3+1]*0.3;
-			image_result[(i*W + j) * 3 + 2] = image_double[(i*W+j)*3+2]*0.2;
+		//Now we project points ontp the direction (store the dot product and index).
+		std::vector<std::pair<double, int>> projI(n);
+		std::vector<std::pair<double, int>> projM(n);
+		for (int i = 0; i < n; i++) {
+			double dotI = I[i*3 + 0] * v.x + I[i*3 + 1] * v.y + I[i*3 + 2] * v.z;
+			double dotM = M[i*3 + 0] * v.x + M[i*3 + 1] * v.y + M[i*3 + 2] * v.z;
+			projI[i] = {dotI, i};
+			projM[i] = {dotM, i};
 		}
+		//Now I sort according to dot product.
+		std::sort(projI.begin(), projI.end());
+		std::sort(projM.begin(), projM.end());
+
+		//The important poart I guess, the advect initial point cloud implementation.
+		for (int i = 0; i<n; i++) {
+			int idxI = projI[i].second;
+			int idxM = projM[i].second; //I am aware that we only need the value of projM[i].first, I would try to keep the struct simple/complete.
+			
+			double diff = projM[i].first - projI[i].first;
+			I[(idxI*3) + 0] += diff * v.x;
+			I[idxI*3 + 1] += diff * v.y;
+			I[idxI * 3 + 2] += diff * v.z;
+		}
+
+		if ((iter + 1) % 10 == 0) {
+            std::cout << "Iteration " << iter + 1 << "/" << nbiter << " completed." << std::endl; //Imp. Break or no over iter logic.
+        }
 	}
-	stbi_write_png("image.png", W, H, 3, &image_result[0], 0);
+
+	// std::vector<unsigned char> image_result(W*H * 3, 0);
+	// for (int i = 0; i < H; i++) {
+	// 	for (int j = 0; j < W; j++) {
+
+	// 		image_result[(i*W + j) * 3 + 0] = image_double[(i*W+j)*3+0]*0.5;
+	// 		image_result[(i*W + j) * 3 + 1] = image_double[(i*W+j)*3+1]*0.3;
+	// 		image_result[(i*W + j) * 3 + 2] = image_double[(i*W+j)*3+2]*0.2;
+	// 	}
+	// }
+
+	// Converting back to image format, clamping to [0, 255], also I would bring back the original method once I revert back to the image_double method initially provided with the template.
+    std::vector<unsigned char> image_result(W * H * 3, 0);
+    for (int i = 0; i < n; i++) {
+        image_result[i * 3 + 0] = static_cast<unsigned char>(std::clamp(I[i * 3 + 0], 0.0, 255.0));
+        image_result[i * 3 + 1] = static_cast<unsigned char>(std::clamp(I[i * 3 + 1], 0.0, 255.0));
+        image_result[i * 3 + 2] = static_cast<unsigned char>(std::clamp(I[i * 3 + 2], 0.0, 255.0));
+    }
+
+	// I am not sure if this needed but since I commented out the original implementation for now, I guess I would leave it in here (basically if source had more pixels than target we just copy the rest natively.)
+    for (int i = n; i < W * H; i++) {
+        image_result[i * 3 + 0] = image_source[i * 3 + 0];
+        image_result[i * 3 + 1] = image_source[i * 3 + 1];
+        image_result[i * 3 + 2] = image_source[i * 3 + 2];
+    }
+
+	// stbi_write_png("image.png", W, H, 3, &image_result[0], 0);
+	//I am not using the same structure for now so I am not gonna use the pointer stuff here my Image result method is a bit different for me not to run into errors for now.
+	stbi_write_png("output.png", W, H, 3, image_result.data(), 0);
+    std::cout << "Saved successfully to output.png" << std::endl;
+    stbi_image_free(image_source);
+    stbi_image_free(image_target);
 
 	return 0;
 }
